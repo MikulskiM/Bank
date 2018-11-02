@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <conio.h>
+#include <fstream>
 
 class BankAccount		// ---------------------------------------------- klasa BankAccount ---------------------------------------------------
 {
@@ -338,10 +339,69 @@ int Bank::howManyAccounts() {
 
 void Bank::save() {
 
+	std::fstream file;
+
+	file.open("bank_data.txt", std::ios::out);
+
+	if (first == 0)
+		std::cout << "\nThere are no accounts to be saved\n";
+	else {
+		BankAccount* temporary = last;
+		while (temporary) {
+			file << temporary->firstName << std::endl;
+			file << temporary->lastName << std::endl;
+			file << temporary->accountNumber << std::endl;
+			file << temporary->balance << std::endl;
+
+			temporary = temporary->next;
+		}
+	}
+	file.close();
 }
 
 void Bank::load() {
+	last = 0;
+	first = 0;
 
+	std::fstream file;
+
+	file.open("bank_data.txt", std::ios::in);
+
+	if (file.good() == true) {
+		// --------------------instrukcje wczytywania 
+		std::string line, fName, lName;
+		int aNumber, balance;
+		int lineNumber = 1;
+
+		while (getline(file, line)) {
+			switch (lineNumber) {
+			case 1: 
+				fName = line;
+				break;
+			case 2: 
+				lName = line;
+				break;
+			case 3:
+				aNumber = atoi(line.c_str());
+				break;
+			case 4: 
+				balance = atoi(line.c_str());
+				break;
+			}
+			if (lineNumber == 4) {
+				newAccount(fName, lName, aNumber, balance);
+				lineNumber = 0;
+			}
+				
+			lineNumber++;
+		}
+
+
+	}
+	else {
+		std::cout << "\nFailed to open bank_data.txt file\n";
+	}
+	file.close();
 }
 
 void Bank::overviewMode() {
@@ -441,12 +501,14 @@ int main()		// -------------------------------------------- G³ówna funkcja -----
 		}
 		else if (wybor == 54)   //6
 		{
-			std::cout << "\n\n zapisywanie banku\n\n";
+			myBank->save();
+			std::cout << "\nSuccessfully saved bank data in bank_data.txt file\n";
 			system("pause");
 		}
 		else if (wybor == 55)   //7
 		{
-			std::cout << "\n\n wczytywanie banku z pliku .txt\n\n";
+			myBank->load();
+			std::cout << "\nSuccessfully loaded bank data from bank_data.txt file\n";
 			system("pause");
 		}
 		else if (wybor == 56)   //8
