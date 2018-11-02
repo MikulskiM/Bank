@@ -17,7 +17,9 @@ public:
 	BankAccount();
 							//BankAccount(std::string first_name, std::string last_name, int account_number, int balance);
 	void withdraw();	// Wyp³aca / usuwa  pieniadze z konta
+	void withdraw(int money);	// Wyp³aca / usuwa  pieniadze z konta
 	void deposit();		// wp³aca pieniadze na konto (dodaje pieniadze)
+	void deposit(int money);		// wp³aca pieniadze na konto (dodaje pieniadze)
 	void showAccount();	// wyswietla aktualny stan konta
 };
 
@@ -49,6 +51,10 @@ void BankAccount::withdraw() {
 	balance -= cash;
 }
 
+void BankAccount::withdraw(int money) {
+	balance -= money;
+}
+
 void BankAccount::deposit() {
 	std::cout << "\nHow much do you want to deposit? ";
 	int cash;
@@ -59,6 +65,10 @@ void BankAccount::deposit() {
 	} while (cash<0);
 
 	balance += cash;
+}
+
+void BankAccount::deposit(int money) {
+	balance += money;
 }
 
 void BankAccount::showAccount() {
@@ -143,6 +153,17 @@ void Bank::deleteAccount() {
 		if (decision == 'l' || decision == 'L') {
 			std::string lastName;
 
+			while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
+				std::cout << temporary->firstName;
+				std::cout << "\t";
+				std::cout << temporary->lastName;
+				std::cout << "\t";
+				std::cout << temporary->accountNumber;
+				std::cout << "\t";
+				std::cout << temporary->balance << "$\n";
+				temporary = temporary->next;
+			}
+
 			std::cout << "Delete account of (type in the last name): ";
 			std::cin >> lastName;
 			while (lastName != temporary->lastName) {
@@ -181,6 +202,18 @@ void Bank::deleteAccount() {
 		}
 		else if (decision == 'n' || decision == 'N') {
 			int number;
+
+			while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
+				std::cout << temporary->firstName;
+				std::cout << "\t";
+				std::cout << temporary->lastName;
+				std::cout << "\t";
+				std::cout << temporary->accountNumber;
+				std::cout << "\t";
+				std::cout << temporary->balance << "$\n";
+				temporary = temporary->next;
+			}
+
 			std::cout << "Delete account number (type in the account number): ";
 			std::cin >> number;
 			while (number != temporary->accountNumber) {
@@ -225,7 +258,60 @@ void Bank::deleteAccount() {
 }
 
 void Bank::transfer() {
+	if (last == first)
+		std::cout << "\n\nunable to make a transfer. There are 0 accounts or only 1\n";
+	else {
 
+		BankAccount* temporary = last;
+
+		while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
+			std::cout<<temporary->firstName;
+			std::cout << "\t";
+			std::cout << temporary->lastName;
+			std::cout << "\t";
+			std::cout << temporary->accountNumber;
+			std::cout << "\t";
+			std::cout << temporary->balance<<"$\n";
+			temporary = temporary->next;
+		}
+		
+		std::cout << "\n\ntransfer money from (last name): ";
+		std::string giver, receiver;
+
+		std::cin >> giver;
+
+		BankAccount* giverPtr = last;
+		while (giver != giverPtr->lastName) {		// ----------------------- wyszukiwanie konta giver
+			giverPtr = giverPtr->next;
+		}
+
+		std::cout << "\t---> to (last name): ";
+		std::cin >> receiver;
+
+		BankAccount* receiverPtr = last;
+		while (receiver != receiverPtr->lastName) {		// -----------------------tu bedzie wyszukiwanie konta receiver
+			receiverPtr = receiverPtr->next;
+		}
+		
+
+		std::cout << "\n\nHow much $ do you want to transfer?: ";
+		int money;
+		do {
+			std::cin >> money;
+			if (giverPtr->balance < money) {
+				std::cout <<"\n"<< giver << " doesn't have that amount of money.\nHow much $ do you want to transfer?: ";
+			}
+			else if(money<0)
+				std::cout << "You are supposed to type in a positive number\nIf you don't want to transfer any money just type 0.\nHow much $ do you want to transfer?: ";
+		} while (money < 0 || giverPtr->balance < money); // -----------------------pamietaj ¿eby wstawiæ || money > giver->balance
+
+		giverPtr->withdraw(money);
+		receiverPtr->deposit(money);
+		std::cout << "\n\nDone :)\n";
+		//delete giverPtr;
+		//delete receiverPtr;
+		//delete temporary;
+	}
 }
 
 void Bank::displayAllAccounts() {
@@ -312,7 +398,7 @@ int main()		// -------------------------------------------- G³ówna funkcja -----
 		std::cout << "   2. Delete bank account  " << std::endl;
 		std::cout << "   3. Transfer money " << std::endl;
 		std::cout << "   4. Display all accounts  " << std::endl;
-		std::cout << "   5. How many accounts are in the bank  " << std::endl;
+		std::cout << "   5. How many accounts are in the bank?  " << std::endl;
 		std::cout << "   6. Save bank data " << std::endl;
 		std::cout << "   7. Load saved bank data  " << std::endl;
 		std::cout << "   8. Overview mode (with deposit & withdraw functions)  " << std::endl;
@@ -335,7 +421,7 @@ int main()		// -------------------------------------------- G³ówna funkcja -----
 		else if (wybor == 51)    //3
 		{
 			system("cls");
-			std::cout << "\n\n przelew\n\n";
+			myBank->transfer();
 			system("pause");
 
 		}
