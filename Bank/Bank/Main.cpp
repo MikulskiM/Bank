@@ -154,6 +154,7 @@ void Bank::deleteAccount() {
 		std::cout << "Would you like to select account by last name or number? [L/N]";
 		std::cin >> decision;
 		do {
+			
 			if (decision == 'l' || decision == 'L') {
 				std::string lastName;
 
@@ -170,39 +171,50 @@ void Bank::deleteAccount() {
 				temporary = last;
 				std::cout << "Delete account of (type in the last name): ";
 				std::cin >> lastName;
+				bool foundAccount = true;
 				while (lastName != temporary->lastName) {
 					temporary = temporary->next;
+					if (temporary == 0) {
+						foundAccount = false;
+						break;
+					}
 				}
-				temporary->showAccount();
-				do {
-					std::cout << "\nDelete this account? [Y/N]: ";
-					std::cin >> decision;
-					if (decision != 'y' && decision != 'n')
-						std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
-				} while (decision != 'y' && decision != 'n');
-				if (decision == 'y' || decision == 'Y') {
-					if (first == last) {
-						first = 0;
-						last = 0;
-					}
-					else if (temporary == first) {
-						first = first->previous;
-						first->next = 0;
-					}
-					else if (temporary == last) {
-						last = last->next;
-						last->previous = 0;
+				if (foundAccount == true) {
+					temporary->showAccount();
+					do {
+						std::cout << "\nDelete this account? [Y/N]: ";
+						std::cin >> decision;
+						if (decision != 'y' && decision != 'n')
+							std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
+					} while (decision != 'y' && decision != 'n');
+					if (decision == 'y' || decision == 'Y') {
+						if (first == last) {
+							first = 0;
+							last = 0;
+						}
+						else if (temporary == first) {
+							first = first->previous;
+							first->next = 0;
+						}
+						else if (temporary == last) {
+							last = last->next;
+							last->previous = 0;
+						}
+						else {
+							temporary->previous->next = temporary->next;
+							temporary->next->previous = temporary->previous;
+						}
 					}
 					else {
-						temporary->previous->next = temporary->next;
-						temporary->next->previous = temporary->previous;
+						std::cout << "\n\nYou decided not to delete this account\n\n ";
+						system("pause");
 					}
-					system("pause");
 				}
 				else {
-					std::cout << "\n\nYou decided not to delete this account\n\n ";
+					std::cout << "\n\tDid NOT find such an account\n";
 					system("pause");
 				}
+				
 			}
 			else if (decision == 'n' || decision == 'N') {
 				int number;
@@ -219,43 +231,57 @@ void Bank::deleteAccount() {
 				}
 				temporary = last;
 				std::cout << "Delete account number (type in the account number): ";
+				bool foundAccount = true;
 				std::cin >> number;
 				while (number != temporary->accountNumber) {
 					temporary = temporary->next;
+					if (temporary == 0) {
+						foundAccount = false;
+						break;
+					}
 				}
-				temporary->showAccount();
-				do {
-					std::cout << "\nDelete this account? [Y/N]: ";
-					std::cin >> decision;
-					if (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N')
-						std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
-				} while (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N');
-				if (decision == 'y' || decision == 'Y') {
-					if (first == last) {
-						first = 0;
-						last = 0;
-					}
-					else if (temporary == first) {
-						first = first->previous;
-						first->next = 0;
-					}
-					else if (temporary == last) {
-						last = last->next;
-						last->previous = 0;
+				if (foundAccount == true) {
+					temporary->showAccount();
+					do {
+						std::cout << "\nDelete this account? [Y/N]: ";
+						std::cin >> decision;
+						if (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N')
+							std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
+					} while (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N');
+					if (decision == 'y' || decision == 'Y') {
+						if (first == last) {
+							first = 0;
+							last = 0;
+						}
+						else if (temporary == first) {
+							first = first->previous;
+							first->next = 0;
+						}
+						else if (temporary == last) {
+							last = last->next;
+							last->previous = 0;
+						}
+						else {
+							temporary->previous->next = temporary->next;
+							temporary->next->previous = temporary->previous;
+						}
+						system("pause");
 					}
 					else {
-						temporary->previous->next = temporary->next;
-						temporary->next->previous = temporary->previous;
+						std::cout << "\n\nYou decided not to delete this account\n\n ";
+						system("pause");
 					}
-					system("pause");
 				}
 				else {
-					std::cout << "\n\nYou decided not to delete this account\n\n ";
+					std::cout << "\n\tCouldn't find such an account\n";
 					system("pause");
 				}
+					
+				
 			}
 			else
-				std::cout << "You are supposed to type L (last name) or N (number) letter. Try again\n";
+				std::cout << "You are supposed to type L (last name) or N (number) letter\n";
+				system("pause");
 		} while (decision != 'l' && decision != 'n' && decision == 'N' && decision == 'L');
 	}
 	
@@ -282,38 +308,59 @@ void Bank::transfer() {
 		}
 		
 		std::cout << "\n\ntransfer money from (last name): ";
-		std::string giver, receiver;
+		std::string giver;
+		bool foundGiver = true;
 
 		std::cin >> giver;
 
 		BankAccount* giverPtr = last;
 		while (giver != giverPtr->lastName) {		// ----------------------- wyszukiwanie konta giver
 			giverPtr = giverPtr->next;
+			if (giverPtr == 0) {
+				foundGiver = false;
+				break;
+			}
 		}
+		if (foundGiver == true) {
+			std::cout << "\t---> to (last name): ";
+			std::string receiver;
+			bool foundReceiver=true;
 
-		std::cout << "\t---> to (last name): ";
-		std::cin >> receiver;
+			std::cin >> receiver;
 
-		BankAccount* receiverPtr = last;
-		while (receiver != receiverPtr->lastName) {		// -----------------------tu bedzie wyszukiwanie konta receiver
-			receiverPtr = receiverPtr->next;
+			BankAccount* receiverPtr = last;
+			while (receiver != receiverPtr->lastName) {		// -----------------------tu bedzie wyszukiwanie konta receiver
+				receiverPtr = receiverPtr->next;
+				if (receiverPtr == 0) {
+					foundReceiver = false;
+					break;
+				}
+			}
+			if (foundReceiver == true) {
+				std::cout << "\n\nHow much $ do you want to transfer?: ";
+				int money;
+				do {
+					std::cin >> money;
+					if (giverPtr->balance < money) {
+						std::cout << "\n" << giver << " doesn't have that amount of money.\nHow much $ do you want to transfer?: ";
+					}
+					else if (money < 0)
+						std::cout << "You are supposed to type in a positive number\nIf you don't want to transfer any money just type 0.\nHow much $ do you want to transfer?: ";
+				} while (money < 0 || giverPtr->balance < money); // -----------------------pamietaj ¿eby wstawiæ || money > giver->balance
+
+				giverPtr->withdraw(money);
+				receiverPtr->deposit(money);
+				std::cout << "\n\nDone :)\n";
+			}
+			else
+				std::cout << "\n Couldn't find the receiver\n";
+		}
+		else {
+			std::cout << "\n Couldn't find the giver\n";
 		}
 		
+	
 
-		std::cout << "\n\nHow much $ do you want to transfer?: ";
-		int money;
-		do {
-			std::cin >> money;
-			if (giverPtr->balance < money) {
-				std::cout <<"\n"<< giver << " doesn't have that amount of money.\nHow much $ do you want to transfer?: ";
-			}
-			else if(money<0)
-				std::cout << "You are supposed to type in a positive number\nIf you don't want to transfer any money just type 0.\nHow much $ do you want to transfer?: ";
-		} while (money < 0 || giverPtr->balance < money); // -----------------------pamietaj ¿eby wstawiæ || money > giver->balance
-
-		giverPtr->withdraw(money);
-		receiverPtr->deposit(money);
-		std::cout << "\n\nDone :)\n";
 		//delete giverPtr;
 		//delete receiverPtr;
 		//delete temporary;
