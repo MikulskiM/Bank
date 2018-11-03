@@ -31,13 +31,6 @@ BankAccount::BankAccount() {
 	previous = 0;
 }
 
-									/*BankAccount::BankAccount(std::string first_name, std::string last_name, int account_number, int _balance) {
-										firstName = first_name;
-										lastName = last_name;
-										accountNumber = account_number;
-										balance = _balance;
-									}*/	
-
 void BankAccount::withdraw() {
 	std::cout << "\nHow much do you want to withdraw? ";
 	int cash;
@@ -110,8 +103,13 @@ void Bank::newAccount() {
 	std::cin >> nowy->firstName;
 	std::cout << "last name: ";
 	std::cin >> nowy->lastName;
-	std::cout << "account number: ";
-	std::cin >> nowy->accountNumber;
+	do {
+		std::cout << "account number: ";
+		std::cin >> nowy->accountNumber;
+		if (nowy->accountNumber < 1000 || nowy->accountNumber > 9999)
+			std::cout << "\n\taccount number must contain 4 digits. Try againt\n";
+	} while (nowy->accountNumber <1000 || nowy->accountNumber > 9999);
+	
 
 	if (first == 0) {
 		first = nowy;
@@ -146,114 +144,121 @@ void Bank::newAccount(std::string firstName, std::string lastName, int accountNu
 }
 
 void Bank::deleteAccount() {
-	BankAccount* temporary = last;
-	char decision;
-	std::cout << "Would you like to select account by last name or number? [L/N]";
-	std::cin >> decision;
-	do {
-		if (decision == 'l' || decision == 'L') {
-			std::string lastName;
+	if (last == 0) {
+		std::cout << "There aren't any accounts\n";
+		system("pause");
+	}
+	else {
+		BankAccount* temporary = last;
+		char decision;
+		std::cout << "Would you like to select account by last name or number? [L/N]";
+		std::cin >> decision;
+		do {
+			if (decision == 'l' || decision == 'L') {
+				std::string lastName;
 
-			while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
-				std::cout << temporary->firstName;
-				std::cout << "\t";
-				std::cout << temporary->lastName;
-				std::cout << "\t";
-				std::cout << temporary->accountNumber;
-				std::cout << "\t";
-				std::cout << temporary->balance << "$\n";
-				temporary = temporary->next;
-			}
-
-			std::cout << "Delete account of (type in the last name): ";
-			std::cin >> lastName;
-			while (lastName != temporary->lastName) {
-				temporary = temporary->next;
-			}
-			temporary->showAccount();
-			do {
-				std::cout << "\nDelete this account? [Y/N]: ";
-				std::cin >> decision;
-				if (decision != 'y' && decision != 'n')
-					std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
-			} while (decision != 'y' && decision != 'n');
-			if (decision == 'y') {
-				if (first == last) {
-					first = 0;
-					last = 0;
+				while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
+					std::cout << temporary->firstName;
+					std::cout << "\t";
+					std::cout << temporary->lastName;
+					std::cout << "\t";
+					std::cout << temporary->accountNumber;
+					std::cout << "\t";
+					std::cout << temporary->balance << "$\n";
+					temporary = temporary->next;
 				}
-				else if (temporary == first) {
-					first = first->previous;
-					first->next = 0;
+				temporary = last;
+				std::cout << "Delete account of (type in the last name): ";
+				std::cin >> lastName;
+				while (lastName != temporary->lastName) {
+					temporary = temporary->next;
 				}
-				else if (temporary == last) {
-					last = last->next;
-					last->previous = 0;
+				temporary->showAccount();
+				do {
+					std::cout << "\nDelete this account? [Y/N]: ";
+					std::cin >> decision;
+					if (decision != 'y' && decision != 'n')
+						std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
+				} while (decision != 'y' && decision != 'n');
+				if (decision == 'y' || decision == 'Y') {
+					if (first == last) {
+						first = 0;
+						last = 0;
+					}
+					else if (temporary == first) {
+						first = first->previous;
+						first->next = 0;
+					}
+					else if (temporary == last) {
+						last = last->next;
+						last->previous = 0;
+					}
+					else {
+						temporary->previous->next = temporary->next;
+						temporary->next->previous = temporary->previous;
+					}
+					system("pause");
 				}
 				else {
-					temporary->previous->next = temporary->next;
-					temporary->next->previous = temporary->previous;
+					std::cout << "\n\nYou decided not to delete this account\n\n ";
+					system("pause");
 				}
-				system("pause");
 			}
-			else {
-				std::cout << "\n\nYou decided not to delete this account\n\n ";
-				system("pause");
-			}
-		}
-		else if (decision == 'n' || decision == 'N') {
-			int number;
+			else if (decision == 'n' || decision == 'N') {
+				int number;
 
-			while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
-				std::cout << temporary->firstName;
-				std::cout << "\t";
-				std::cout << temporary->lastName;
-				std::cout << "\t";
-				std::cout << temporary->accountNumber;
-				std::cout << "\t";
-				std::cout << temporary->balance << "$\n";
-				temporary = temporary->next;
-			}
-
-			std::cout << "Delete account number (type in the account number): ";
-			std::cin >> number;
-			while (number != temporary->accountNumber) {
-				temporary = temporary->next;
-			}
-			temporary->showAccount();
-			do {
-				std::cout << "\nDelete this account? [Y/N]: ";
-				std::cin >> decision;
-				if (decision != 'y' && decision != 'n')
-					std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
-			} while (decision != 'y' && decision != 'n');
-			if (decision == 'y') {
-				if (first == last) {
-					first = 0;
-					last = 0;
+				while (temporary) {								// znaczy to samo co while(temporary!=0) wyœwietla po kolei wszystkie konta
+					std::cout << temporary->firstName;
+					std::cout << "\t";
+					std::cout << temporary->lastName;
+					std::cout << "\t";
+					std::cout << temporary->accountNumber;
+					std::cout << "\t";
+					std::cout << temporary->balance << "$\n";
+					temporary = temporary->next;
 				}
-				else if (temporary == first) {
-					first = first->previous;
-					first->next = 0;
+				temporary = last;
+				std::cout << "Delete account number (type in the account number): ";
+				std::cin >> number;
+				while (number != temporary->accountNumber) {
+					temporary = temporary->next;
 				}
-				else if (temporary == last) {
-					last = last->next;
-					last->previous = 0;
+				temporary->showAccount();
+				do {
+					std::cout << "\nDelete this account? [Y/N]: ";
+					std::cin >> decision;
+					if (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N')
+						std::cout << "You are supposed to choose Y (yes) or N (no). try again\n";
+				} while (decision != 'y' && decision != 'n' && decision != 'Y' && decision != 'N');
+				if (decision == 'y' || decision == 'Y') {
+					if (first == last) {
+						first = 0;
+						last = 0;
+					}
+					else if (temporary == first) {
+						first = first->previous;
+						first->next = 0;
+					}
+					else if (temporary == last) {
+						last = last->next;
+						last->previous = 0;
+					}
+					else {
+						temporary->previous->next = temporary->next;
+						temporary->next->previous = temporary->previous;
+					}
+					system("pause");
 				}
 				else {
-					temporary->previous->next = temporary->next;
-					temporary->next->previous = temporary->previous;
+					std::cout << "\n\nYou decided not to delete this account\n\n ";
+					system("pause");
 				}
-				system("pause");
 			}
-			else {
-				std::cout << "\n\nYou decided not to delete this account\n\n ";
-				system("pause");
-			}
-		}
-		else
-			std::cout << "You are supposed to type L (last name) or N (number) letter. Try again\n";
-	} while (decision != 'l' && decision != 'n' && decision == 'N' && decision == 'L');
+			else
+				std::cout << "You are supposed to type L (last name) or N (number) letter. Try again\n";
+		} while (decision != 'l' && decision != 'n' && decision == 'N' && decision == 'L');
+	}
+	
 
 	//delete temporary;									<------ dopóki nie usun¹³em tego by³y problemy z displayAllAccounts() gdy wywo³ywa³em to po deleteAccount()
 }
@@ -414,9 +419,9 @@ void Bank::overviewMode() {
 		do {
 			system("cls");
 			temporary->showAccount();
-			std::cout << "\n1.Next | 2.Previous | 3.Deposit | 4.Withdraw | 0.Exit overviewMode\n\tchoose option: ";
+			std::cout << "\n6.Next | 4.Previous | 8.Deposit | 2.Withdraw | 0.Exit overviewMode\n\tchoose option: ";
 			std::cin >> wybor;
-			if (wybor == 1) {
+			if (wybor == 6) {
 				if (temporary->next == 0) {
 					std::cout << "\n\tCould't find next account.\n";
 					system("pause");
@@ -424,16 +429,16 @@ void Bank::overviewMode() {
 				else
 					temporary = temporary->next;
 			}
-			else if (wybor == 2)
+			else if (wybor == 4)
 				if (temporary->previous == 0) {
 					std::cout << "\n\tCould't find previous account.\n";
 					system("pause");
 				}
 				else
 					temporary = temporary->previous;
-			else if (wybor == 3)
+			else if (wybor == 8)
 				temporary->deposit();
-			else if (wybor == 4)
+			else if (wybor == 2)
 				temporary->withdraw();
 			else if (wybor == 0) {
 			}
