@@ -1,6 +1,6 @@
 # Bank
 
-I wanted to make some an application that would simulate bank, so here it is.
+I wanted to make some application that would simulate bank, so here it is.
 
 I'm planning to add:
 - more banks (each one would have it's own interst rate on the deposit and different loan interest rate)
